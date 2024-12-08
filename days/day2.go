@@ -3,6 +3,7 @@ package days
 import (
 	"fmt"
 	"os"
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -20,21 +21,16 @@ func NewReport(line string) Report {
 	return Report{levels: levels}
 }
 
-func (r *Report) IsSafe() bool {
+func (r *Report) IsSafe() (bool, int) {
 	last := r.levels[0]
 	direction := 0
-	for i, l := range r.levels {
-		// HACK skip comparing first element with itself
-		if i == 0 {
-			continue
-		}
-
+	for i, l := range r.levels[1:] {
 		diff := l - last
 
 		if direction == -1 && 0 < diff {
-			return false
+			return false, i
 		} else if direction == 1 && diff < 0 {
-			return false
+			return false, i
 		}
 
 		// no int abs function workaround
@@ -45,13 +41,14 @@ func (r *Report) IsSafe() bool {
 		} else if diff > 0 {
 			direction = 1
 		}
+
 		if 3 < diff || diff < 1 {
-			return false
+			return false, i
 		}
 
 		last = l
 	}
-	return true
+	return true, 0
 }
 
 func Day2() {
@@ -61,10 +58,20 @@ func Day2() {
 	safeN := 0
 	for _, l := range lines {
 		report := NewReport(l)
-		if report.IsSafe() {
+		isSafe, i := report.IsSafe()
+		if isSafe {
 			safeN++
+		} else {
+			// TODO problem dampener answer is too low
+			fmt.Print("checking again ", l, " at ", i)
+			report.levels = slices.Delete(report.levels, i, i+1)
+			isSafeAgain, _ := report.IsSafe()
+			if isSafeAgain {
+				safeN++
+				fmt.Print(" YES")
+			}
+			fmt.Println()
 		}
 	}
 	fmt.Println("Safe reports:", safeN)
-
 }
