@@ -3,7 +3,6 @@ package days
 import (
 	"fmt"
 	"os"
-	"slices"
 	"strconv"
 	"strings"
 )
@@ -17,6 +16,17 @@ func NewReport(line string) Report {
 	for _, v := range strings.Split(line, " ") {
 		n, _ := strconv.Atoi(v)
 		levels = append(levels, n)
+	}
+	return Report{levels: levels}
+}
+
+func (r *Report) Without(n int) Report {
+	levels := make([]int, 0)
+	for i, v := range r.levels {
+		if i == n {
+			continue
+		}
+		levels = append(levels, v)
 	}
 	return Report{levels: levels}
 }
@@ -58,19 +68,19 @@ func Day2() {
 	safeN := 0
 	for _, l := range lines {
 		report := NewReport(l)
-		isSafe, i := report.IsSafe()
+		isSafe, _ := report.IsSafe()
 		if isSafe {
 			safeN++
 		} else {
 			// TODO problem dampener answer is too low
-			fmt.Print("checking again ", l, " at ", i)
-			report.levels = slices.Delete(report.levels, i, i+1)
-			isSafeAgain, _ := report.IsSafe()
-			if isSafeAgain {
-				safeN++
-				fmt.Print(" YES")
+			for j := range report.levels {
+				correctedReport := report.Without(j)
+				isSafeAgain, _ := correctedReport.IsSafe()
+				if isSafeAgain {
+					safeN++
+					break
+				}
 			}
-			fmt.Println()
 		}
 	}
 	fmt.Println("Safe reports:", safeN)
