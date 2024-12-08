@@ -58,10 +58,13 @@ func Day2() {
 	res, _ := os.ReadFile("input2.txt")
 	stringRes := string(res)
 	lines := strings.Split(stringRes, "\n")
-
+	safeN := 0
 	for _, l := range lines {
 		report := NewReport(l)
-		// fmt.Println(report)
-		fmt.Println(report.IsSafe())
+		if report.IsSafe() {
+			safeN++
+		}
 	}
+	fmt.Println("Safe reports:", safeN)
+
 }
