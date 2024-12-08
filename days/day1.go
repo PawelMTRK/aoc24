@@ -30,17 +30,14 @@ func (l *HistorianList) GetDifference(l2 *HistorianList) int {
 	slices.Sort(l.list)
 	slices.Sort(l2.list)
 	diff := 0
-	for i, _ := range l.list {
+	for i := range l.list {
 		diff += int(math.Abs(float64(l.list[i] - l2.list[i])))
 	}
 	return diff
 }
 
 func Day1() {
-	res, err := os.ReadFile("input.txt")
-	if err != nil {
-		fmt.Println("ReadFile: ", err)
-	}
+	res, _ := os.ReadFile("input.txt")
 	stringRes := string(res)
 	sliceNums := strings.Fields(stringRes)
 
