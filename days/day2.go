@@ -31,16 +31,16 @@ func (r *Report) Without(n int) Report {
 	return Report{levels: levels}
 }
 
-func (r *Report) IsSafe() (bool, int) {
+func (r *Report) IsSafe() bool {
 	last := r.levels[0]
 	direction := 0
-	for i, l := range r.levels[1:] {
+	for _, l := range r.levels[1:] {
 		diff := l - last
 
 		if direction == -1 && 0 < diff {
-			return false, i
+			return false
 		} else if direction == 1 && diff < 0 {
-			return false, i
+			return false
 		}
 
 		// no int abs function workaround
@@ -53,12 +53,12 @@ func (r *Report) IsSafe() (bool, int) {
 		}
 
 		if 3 < diff || diff < 1 {
-			return false, i
+			return false
 		}
 
 		last = l
 	}
-	return true, 0
+	return true
 }
 
 func Day2() {
@@ -68,14 +68,13 @@ func Day2() {
 	safeN := 0
 	for _, l := range lines {
 		report := NewReport(l)
-		isSafe, _ := report.IsSafe()
+		isSafe := report.IsSafe()
 		if isSafe {
 			safeN++
 		} else {
-			// TODO problem dampener answer is too low
 			for j := range report.levels {
 				correctedReport := report.Without(j)
-				isSafeAgain, _ := correctedReport.IsSafe()
+				isSafeAgain := correctedReport.IsSafe()
 				if isSafeAgain {
 					safeN++
 					break
