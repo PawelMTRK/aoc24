@@ -36,6 +36,27 @@ func (l *HistorianList) GetDifference(l2 *HistorianList) int {
 	return diff
 }
 
+func (l *HistorianList) Count(needle int) int {
+	n := 0
+	for _, v := range l.list {
+		if v == needle {
+			n++
+		}
+	}
+	return n
+}
+
+func (l *HistorianList) GetSimiliarity(l2 *HistorianList) int {
+	slices.Sort(l.list)
+	slices.Sort(l2.list)
+	sim := 0
+	for _, v := range l.list {
+		amount := l2.Count(v)
+		sim += v * amount
+	}
+	return sim
+}
+
 func Day1() {
 	res, _ := os.ReadFile("input.txt")
 	stringRes := string(res)
@@ -53,5 +74,7 @@ func Day1() {
 	}
 
 	diff := list1.GetDifference(&list2)
+	sim := list1.GetSimiliarity(&list2)
 	fmt.Println("The difference is:", diff)
+	fmt.Println("The similiarity is:", sim)
 }
