@@ -30,6 +30,19 @@ func IndexN(s string, substr string, n int) int {
 	return i
 }
 
+func GetIndexes(s string, substr string) []int {
+	count := strings.Count(s, substr)
+	indexes := make([]int, count)
+	fmt.Println(count)
+	if count == 0 {
+		return nil
+	}
+	for i := range count {
+		indexes[i] = IndexN(s, substr, i+1)
+	}
+	return indexes
+}
+
 func NewPuter(v string) Puter {
 	memoryBlocks := strings.Split(v, "mul")
 	return Puter{mulBlocks: memoryBlocks[1:]}
