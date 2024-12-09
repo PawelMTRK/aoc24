@@ -12,6 +12,24 @@ type Puter struct {
 	mulArgs   [][2]int
 }
 
+func IndexN(s string, substr string, n int) int {
+	i, last := 0, 0
+	for range n {
+		i = strings.Index(s[last:], substr)
+		if i == -1 {
+			return -1
+		}
+		last += i + 1
+	}
+	// last variable contains the last index of the substring + 1
+	// so we decrement it
+	i = last - 1
+	if i < 0 {
+		i = 0
+	}
+	return i
+}
+
 func NewPuter(v string) Puter {
 	memoryBlocks := strings.Split(v, "mul")
 	return Puter{mulBlocks: memoryBlocks[1:]}
