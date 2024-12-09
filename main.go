@@ -1,7 +1,7 @@
 package main
 
 import (
-	"days/days"
+	"aoc24/days"
 	"fmt"
 )
 
