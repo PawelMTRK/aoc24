@@ -14,5 +14,6 @@ func main() {
 	fmt.Println("-_* AOC 2024 *_-")
 	// RunDay(1, days.Day1)
 	// RunDay(2, days.Day2)
-	RunDay(3, days.Day3)
+	// RunDay(3, days.Day3)
+	RunDay(4, days.Day4)
 }
