@@ -1,6 +1,8 @@
 package util
 
-import "strings"
+import (
+	"strings"
+)
 
 // Get n-th occurence of substr in string s. For n = 0, returns whole string, for subsequent
 // values, it returns n-th index of the substr.
@@ -45,8 +47,8 @@ func ToggleBool(val *bool, enable, disable bool) {
 }
 
 // Compare three values at once
-func Compare3(v1, v2, v3 any) bool {
-	if v1 == v2 && v2 == v3 {
+func Compare3[T comparable](v1, v2, v3 T) bool {
+	if v1 == v3 && v2 == v3 {
 		return true
 	} else {
 		return false
