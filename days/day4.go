@@ -4,15 +4,21 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"sync"
 )
 
 type WordSearch struct {
 	puzzle []string
+	total  int
+	m      sync.Mutex
+	wg     sync.WaitGroup
 }
 
-func NewWordSearch(s string) WordSearch {
+func NewWordSearch(s string) *WordSearch {
 	lines := strings.Split(s, "\n")
-	return WordSearch{puzzle: lines}
+	ws := WordSearch{puzzle: lines, total: 0}
+	ws.wg.Add(4)
+	return &ws
 }
 
 func (w *WordSearch) isXMASorSAMX(x, m, a, s byte) bool {
@@ -24,15 +30,15 @@ func (w *WordSearch) isXMASorSAMX(x, m, a, s byte) bool {
 	return false
 }
 
-func (w *WordSearch) FindByDirection(dir string) int {
-	total := 0
-
+func (w *WordSearch) FindByDirection(dir string) {
 	switch dir {
 	case "-":
 		for r := range len(w.puzzle) {
 			for c := range len(w.puzzle[r]) - 3 {
 				if w.isXMASorSAMX(w.puzzle[r][c], w.puzzle[r][c+1], w.puzzle[r][c+2], w.puzzle[r][c+3]) {
-					total++
+					w.m.Lock()
+					w.total++
+					w.m.Unlock()
 				}
 			}
 		}
@@ -40,8 +46,9 @@ func (w *WordSearch) FindByDirection(dir string) int {
 		for r := range len(w.puzzle) - 3 {
 			for c := range len(w.puzzle[r]) {
 				if w.isXMASorSAMX(w.puzzle[r][c], w.puzzle[r+1][c], w.puzzle[r+2][c], w.puzzle[r+3][c]) {
-					fmt.Println("|XMAS at", r, c)
-					total++
+					w.m.Lock()
+					w.total++
+					w.m.Unlock()
 				}
 			}
 		}
@@ -49,8 +56,9 @@ func (w *WordSearch) FindByDirection(dir string) int {
 		for r := range len(w.puzzle) - 3 {
 			for c := range len(w.puzzle[r]) - 3 {
 				if w.isXMASorSAMX(w.puzzle[r][c], w.puzzle[r+1][c+1], w.puzzle[r+2][c+2], w.puzzle[r+3][c+3]) {
-					fmt.Println("\\XMAS at", r, c)
-					total++
+					w.m.Lock()
+					w.total++
+					w.m.Unlock()
 				}
 			}
 		}
@@ -58,21 +66,24 @@ func (w *WordSearch) FindByDirection(dir string) int {
 		for r := range len(w.puzzle) - 3 {
 			for c := range len(w.puzzle[r]) - 3 {
 				if w.isXMASorSAMX(w.puzzle[r][c+3], w.puzzle[r+1][c+2], w.puzzle[r+2][c+1], w.puzzle[r+3][c]) {
-					fmt.Println("/XMAS at", r, c+3)
-					total++
+					w.m.Lock()
+					w.total++
+					w.m.Unlock()
 				}
 			}
 		}
-
 	}
-	return total
+	w.wg.Done()
 }
 
 func Day4() {
 	res, _ := os.ReadFile("input4.txt")
 	stringRes := string(res)
 	wordSearch := NewWordSearch(stringRes)
-	fmt.Println(wordSearch.puzzle[0])
-	total := wordSearch.FindByDirection("-") + wordSearch.FindByDirection("|") + wordSearch.FindByDirection("\\") + wordSearch.FindByDirection("/")
-	fmt.Println(total)
+	go wordSearch.FindByDirection("-")
+	go wordSearch.FindByDirection("|")
+	go wordSearch.FindByDirection("\\")
+	go wordSearch.FindByDirection("/")
+	wordSearch.wg.Wait()
+	fmt.Println("Total number of XMAS:", wordSearch.total)
 }
