@@ -43,3 +43,22 @@ func ToggleBool(val *bool, enable, disable bool) {
 		*val = false
 	}
 }
+
+// Compare three values at once
+func Compare3(v1, v2, v3 any) bool {
+	if v1 == v2 && v2 == v3 {
+		return true
+	} else {
+		return false
+	}
+}
+
+// Returns true if any of the arguments passed to it is true
+func Any(bools ...bool) bool {
+	for _, b := range bools {
+		if b {
+			return true
+		}
+	}
+	return false
+}
