@@ -33,21 +33,16 @@ func NewUpdate(str string) Update {
 	return Update{Pages: pages}
 }
 
-func (u *Update) GetRelatedRules(rules []*PageRule) []*PageRule {
-	relatedRules := make([]*PageRule, 0)
+func (u *Update) IsCorrect(rules []*PageRule) bool {
 	for _, rule := range rules {
+		// skip checking the rule if it doesn't
+		// contain processed pages
 		rule1HasPages := slices.Contains(u.Pages, rule.Rule[0])
 		rule2HasPages := slices.Contains(u.Pages, rule.Rule[1])
-		if rule1HasPages && rule2HasPages {
-			relatedRules = append(relatedRules, rule)
+		if !(rule1HasPages && rule2HasPages) {
+			continue
 		}
-	}
-	return relatedRules
-}
-
-func (u *Update) IsCorrect(rules []*PageRule) bool {
-	fmt.Println("Testing", u.Pages)
-	for _, rule := range rules {
+		// check if the rule applies
 		fmt.Println("Rule", rule)
 		p1Index := slices.Index(u.Pages, rule.Rule[0])
 		p2Index := slices.Index(u.Pages, rule.Rule[1])
@@ -66,8 +61,7 @@ type Printer struct {
 func (p *Printer) GetCorrectUpdates() []Update {
 	correctUpdates := make([]Update, 0)
 	for _, update := range p.Updates {
-		relatedRules := update.GetRelatedRules(p.PageRules)
-		if update.IsCorrect(relatedRules) {
+		if update.IsCorrect(p.PageRules) {
 			fmt.Println("CORRECT")
 			correctUpdates = append(correctUpdates, update)
 		} else {
