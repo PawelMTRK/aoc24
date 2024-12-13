@@ -8,15 +8,13 @@ import (
 	"strings"
 )
 
-type PageRule struct {
-	Rule [2]int
-}
+type PageRule [2]int
 
 func NewPageRule(str string) PageRule {
 	rule := strings.Split(str, "|")
 	r1, _ := strconv.Atoi(rule[0])
 	r2, _ := strconv.Atoi(rule[1])
-	return PageRule{Rule: [2]int{r1, r2}}
+	return [2]int{r1, r2}
 }
 
 type Update struct {
@@ -37,14 +35,14 @@ func (u *Update) IsCorrect(rules []*PageRule) bool {
 	for _, rule := range rules {
 		// skip checking the rule if it doesn't
 		// contain processed pages
-		rule1HasPages := slices.Contains(u.Pages, rule.Rule[0])
-		rule2HasPages := slices.Contains(u.Pages, rule.Rule[1])
+		rule1HasPages := slices.Contains(u.Pages, rule[0])
+		rule2HasPages := slices.Contains(u.Pages, rule[1])
 		if !(rule1HasPages && rule2HasPages) {
 			continue
 		}
 		// check if the rule applies
-		p1Index := slices.Index(u.Pages, rule.Rule[0])
-		p2Index := slices.Index(u.Pages, rule.Rule[1])
+		p1Index := slices.Index(u.Pages, rule[0])
+		p2Index := slices.Index(u.Pages, rule[1])
 		if p1Index > p2Index {
 			return false
 		}
