@@ -43,7 +43,6 @@ func (u *Update) IsCorrect(rules []*PageRule) bool {
 			continue
 		}
 		// check if the rule applies
-		fmt.Println("Rule", rule)
 		p1Index := slices.Index(u.Pages, rule.Rule[0])
 		p2Index := slices.Index(u.Pages, rule.Rule[1])
 		if p1Index > p2Index {
@@ -62,13 +61,19 @@ func (p *Printer) GetCorrectUpdates() []Update {
 	correctUpdates := make([]Update, 0)
 	for _, update := range p.Updates {
 		if update.IsCorrect(p.PageRules) {
-			fmt.Println("CORRECT")
 			correctUpdates = append(correctUpdates, update)
-		} else {
-			fmt.Println("NO")
 		}
 	}
 	return correctUpdates
+}
+
+func (p *Printer) GetSum() int {
+	total := 0
+	for _, v := range p.GetCorrectUpdates() {
+		middlePage := v.Pages[len(v.Pages)/2]
+		total += middlePage
+	}
+	return total
 }
 
 func NewPrinter(rulesStr, updateStr string) Printer {
@@ -85,8 +90,8 @@ func NewPrinter(rulesStr, updateStr string) Printer {
 }
 
 func Day5() {
-	res, _ := os.ReadFile("inputtest.txt")
+	res, _ := os.ReadFile("input5.txt")
 	stringRes := strings.Split(string(res), "\n\n")
 	printer := NewPrinter(stringRes[0], stringRes[1])
-	fmt.Println(printer.GetCorrectUpdates())
+	fmt.Println("Middle page numbers:", printer.GetSum())
 }
